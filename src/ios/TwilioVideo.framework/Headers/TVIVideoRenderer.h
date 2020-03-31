@@ -13,14 +13,15 @@
 /**
  *  TVIVideoRenderers render frames from video tracks.
  */
+NS_SWIFT_NAME(VideoRenderer)
 @protocol TVIVideoRenderer <NSObject>
 
 /**
  *  @brief Render an individual frame.
  *
- *  @discussion Your renderer is required to support frames in the format `TVIPixelFormatYUV420PlanarFullRange`.
- *  You should strongly reference (retain) the `TVIVideoFrame` before this call returns if you want to render it later.
- *  Frames are delivered to your renderer at or near their presentation timestamps.
+ *  @discussion A `TVIVideoRenderer` is expected to support any valid `TVIPixelFormat` or drop incoming frames if it
+ *  cannot process them. You should strongly reference (retain) the `TVIVideoFrame` before this call returns if you
+ *  want to render it later. Frames are delivered to your renderer at or near their presentation timestamps.
  *
  *  @param frame The frame to be rendered.
  */
@@ -40,12 +41,15 @@
 @optional
 
 /**
- *  @brief A list of the optional pixel formats that the renderer supports in addition to `TVIPixelFormatYUV420PlanarFullRange`.
+ * @brief Informs your renderer that it is no longer being used and allows you to perform any cleanup necessary if
+ * you wish to reuse the renderer with another video track.
  *
- *  @discussion Allows your renderer to declare support for the optional `TVIPixelFormat` types that it can handle.
- *  Any source format defined in `TVIPixelFormat` can be converted to `TVIPixelFormatYUV420PlanarFullRange`. If
- *  an optional format is not supported then a format conversion is performed before delivering frames to the renderer.
+ * @discussion If implemented, this method will be called when removing the renderer during the invocation of
+ * `[TVIVideoTrack removeRenderer:]`. This method will be invoked on the thread in which `[TVIVideoTrack removeRenderer:]`
+ * was called. When your Client is unsubscribed from a `TVIRemoteVideoTrack` you are given the opportunity to remove your
+ * renderer. If the rendered is not removed manually, this method will automatically be called after the
+ * `didUnsubscribeFromVideoTrack:publication:forParticipant:` delegate method has been invoked.
  */
-@property (nonatomic, copy, readonly, nonnull) NSArray<NSNumber *> *optionalPixelFormats;
+- (void)invalidateRenderer;
 
 @end

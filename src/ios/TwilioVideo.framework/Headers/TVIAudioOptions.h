@@ -10,6 +10,7 @@
 /**
  *  `TVIAudioOptionsBuilder` constructs `TVIAudioOptions`.
  */
+NS_SWIFT_NAME(AudioOptionsBuilder)
 @interface TVIAudioOptionsBuilder : NSObject
 
 /**
@@ -23,21 +24,23 @@
 @property (nonatomic, assign) int audioJitterBufferMaxPackets;
 
 /**
+ *  @brief Enable software Acoustic Echo Cancellation (AEC). Defaults to `NO`.
+ *
+ *  @discussion TVIDefaultAudioDevice uses Apple's built-in hardware echo cancellation. If you are having issues with
+ *  echo cancellation and `TVIDefaultAudioDevice`, or you've written your own `TVIAudioDevice` without echo cancellation
+ *  you may wish to enable software echo cancellation instead. This API is currently experimental, and we may extend the
+ *  `TVIAudioDecice`'s APIs to work with this property.
+ */
+@property (nonatomic, assign, getter=isSoftwareAecEnabled) BOOL softwareAecEnabled;
+
+/**
  *  @brief Audio processing to remove background noise of lower frequencies. Defaults to `YES`.
  */
 @property (nonatomic, assign) BOOL highpassFilter;
 
 /**
- *  @brief Enable audio level control. Defaults to `NO`.
+ *  @brief You should not initialize `TVIAudioOptionsBuilder` directly, use a TVIAudioOptionsBuilderBlock instead.
  */
-@property (nonatomic, assign) BOOL levelControl;
-
-/**
- *  @brief An optional initialization value for the level controller in order to compute the signal gain. The unit for
- *  the peak level is dBFS and the allowed range is -100..0. Defaults to `-6.0206f`.
- */
-@property (nonatomic, assign) CGFloat levelControlInitialPeakLevelDBFS;
-
 - (null_unspecified instancetype)init __attribute__((unavailable("Use a TVIAudioOptionsBuilderBlock instead.")));
 
 @end
@@ -45,13 +48,15 @@
 /**
  *  `TVIAudioOptionsBuilderBlock` allows you to construct `TVIAudioOptions` using the builder pattern.
  *
- *  @param builder The builder
+ *  @param builder The builder.
  */
-typedef void (^TVIAudioOptionsBuilderBlock)(TVIAudioOptionsBuilder * _Nonnull builder);
+typedef void (^TVIAudioOptionsBuilderBlock)(TVIAudioOptionsBuilder * _Nonnull builder)
+NS_SWIFT_NAME(AudioOptionsBuilder.Block);
 
 /**
  *  `TVIAudioOptions` specifies options for `TVILocalAudioTrack`.
  */
+NS_SWIFT_NAME(AudioOptions)
 @interface TVIAudioOptions : NSObject
 
 /**
@@ -65,20 +70,19 @@ typedef void (^TVIAudioOptionsBuilderBlock)(TVIAudioOptionsBuilder * _Nonnull bu
 @property (nonatomic, assign, readonly) BOOL audioJitterBufferFastAccelerate;
 
 /**
+ *  @brief Enable software Acoustic Echo Cancellation (AEC). Defaults to `NO`.
+ *
+ *  @discussion TVIDefaultAudioDevice uses Apple's built-in hardware echo cancellation. If you are having issues with
+ *  echo cancellation and `TVIDefaultAudioDevice`, or you've written your own `TVIAudioDevice` without echo cancellation
+ *  you may wish to enable software echo cancellation instead. This API is currently experimental, and we may extend the
+ *  `TVIAudioDecice`'s APIs to work with this property.
+ */
+@property (nonatomic, assign, readonly, getter=isSoftwareAecEnabled) BOOL softwareAecEnabled;
+
+/**
  *  @brief Audio processing to remove background noise of lower frequencies. Defaults to `YES`.
  */
 @property (nonatomic, assign, readonly) BOOL highpassFilter;
-
-/**
- *  @brief Enable audio level control. Defaults to `NO`.
- */
-@property (nonatomic, assign, readonly) BOOL levelControl;
-
-/**
- *  @brief An optional initialization value for the level controller in order to compute the signal gain. The unit for
- *  the peak level is dBFS and the allowed range is -100..0. Defaults to `-6.0206f`.
- */
-@property (nonatomic, assign, readonly) CGFloat levelControlInitialPeakLevelDBFS;
 
 /**
  *  @brief Creates default options.

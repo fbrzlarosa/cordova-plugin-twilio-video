@@ -17,22 +17,24 @@ typedef NS_ENUM(NSUInteger, TVITrackState) {
      *  Track live.
      */
     TVITrackStateLive,
-};
+}
+NS_SWIFT_NAME(Track.State);
 
 /**
  *  `TVITrack` is the base class from which all other Track types are derived.
  */
+NS_SWIFT_NAME(Track)
 @interface TVITrack : NSObject
 
 /**
- *  @brief A unique identifier for the Track.
- */
-@property (nonatomic, copy, readonly, nonnull) NSString *trackId;
-
-/**
- *  @brief Indicates if the track is enabled or not.
+ *  @brief Indicates if the Track is enabled or not.
  */
 @property (nonatomic, assign, readonly, getter=isEnabled) BOOL enabled;
+
+/**
+ *  @brief The Track name. 
+ */
+@property (nonatomic, copy, readonly, nonnull) NSString *name;
 
 /**
  *  @brief The current state of the Track.

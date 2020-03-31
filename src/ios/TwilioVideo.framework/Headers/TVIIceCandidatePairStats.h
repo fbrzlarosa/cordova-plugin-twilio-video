@@ -26,7 +26,7 @@ typedef NS_ENUM(NSUInteger, TVIIceCandidatePairState) {
     /**
      *  Ice candidate pair state in progress
      */
-    TVIIceCandidatePairStateInprogress,
+    TVIIceCandidatePairStateInProgress,
     /**
      *  Ice candidate pair state state Failed
      */
@@ -39,12 +39,14 @@ typedef NS_ENUM(NSUInteger, TVIIceCandidatePairState) {
      *  Unknown Ice candidate pair state
      */
     TVIIceCandidatePairStateUnknown
-};
+}
+NS_SWIFT_NAME(IceCandidatePairStats.State);
 
 
 /**
  * `TVIIceCandidatePairStats` reflects the properties of a Ice candidate pair
  */
+NS_SWIFT_NAME(IceCandidatePairStats)
 @interface TVIIceCandidatePairStats : NSObject
 
 /**

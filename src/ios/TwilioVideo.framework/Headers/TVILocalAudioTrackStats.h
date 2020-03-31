@@ -10,6 +10,7 @@
 /**
  * `TVILocalAudioTrackStats` represents stats about a local audio track.
  */
+NS_SWIFT_NAME(LocalAudioTrackStats)
 @interface TVILocalAudioTrackStats : TVILocalTrackStats
 
 /**

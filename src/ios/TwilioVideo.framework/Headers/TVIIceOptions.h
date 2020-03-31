@@ -19,11 +19,13 @@ typedef NS_ENUM(NSUInteger, TVIIceTransportPolicy) {
      *  Only TURN relay transports will be used.
      */
     TVIIceTransportPolicyRelay = 1
-};
+}
+NS_SWIFT_NAME(IceOptions.IceTransportPolicy);
 
 /**
  *  `TVIIceServer` is a single STUN or TURN server.
  */
+NS_SWIFT_NAME(IceServer)
 @interface TVIIceServer : NSObject
 
 /**
@@ -82,6 +84,7 @@ typedef NS_ENUM(NSUInteger, TVIIceTransportPolicy) {
  *  be fetched for you based upon how the Room was created. For Client created Rooms the default Room settings
  *  are used, while settings are provided on a per-Room basis when creating Rooms using the REST API.
  */
+NS_SWIFT_NAME(IceOptionsBuilder)
 @interface TVIIceOptionsBuilder : NSObject
 
 /**
@@ -94,36 +97,68 @@ typedef NS_ENUM(NSUInteger, TVIIceTransportPolicy) {
  */
 @property (nonatomic, assign) TVIIceTransportPolicy transportPolicy;
 
+/**
+ *  @brief Whether to abort if ICE servers time out.
+ *
+ *  @discussion If fetching ICE servers times out (due to a restrictive network or a slow network proxy), then, by default,
+ *  the Video SDK will fallback to using hard-coded STUN servers and continue connecting to the Room.
+ *  Setting this property to true will instead abort with error 53500, "Unable to acquire configuration".
+ *  Defaults to 'NO'.
+ */
+@property (nonatomic, assign) BOOL abortOnIceServersTimeout;
+
+/**
+ *  @brief The timeout to wait (before aborting) when acquiring ICE servers. Defaults to 3 seconds.
+ */
+@property (nonatomic, assign) NSTimeInterval iceServersTimeout;
+
 - (null_unspecified instancetype)init __attribute__((unavailable("Use a TVIIceOptionsBuilderBlock instead.")));
 
 @end
 
 /**
- *  `TVIIceOptionsBuilderBlock` is a block to configure ICE options.
+ *  @brief `TVIIceOptionsBuilderBlock` is a block to configure ICE options.
  *
- *  @param builder The builder
+ *  @param builder The builder.
  */
-typedef void (^TVIIceOptionsBuilderBlock)(TVIIceOptionsBuilder * _Nonnull builder);
+typedef void (^TVIIceOptionsBuilderBlock)(TVIIceOptionsBuilder * _Nonnull builder)
+NS_SWIFT_NAME(IceOptionsBuilder.Block);
 
 /**
- *  `TVIIceOptions` specifies custom media connectivity configurations.
+ *  @brief `TVIIceOptions` specifies custom media connectivity configurations.
  *
  *  @discussion Media connections are established using the ICE (Interactive Connectivity Establishment) protocol.
  *  These options allow you to customize how data flows to and from participants, and which protocols to use.
  *  You may also provide your own ICE servers, overriding the defaults.
  *  https://www.twilio.com/stun-turn
  */
+NS_SWIFT_NAME(IceOptions)
 @interface TVIIceOptions : NSObject
 
 /**
- *  An array of `TVIIceServer` objects to be used during connection establishment.
+ *  @brief An array of `TVIIceServer` objects to be used during connection establishment.
  */
 @property (nonatomic, copy, nonnull, readonly) NSArray<TVIIceServer *> *servers;
 
 /**
- *  The transport policy to use. Defaults to `TVIIceTransportPolicyAll`.
+ *  @brief The transport policy to use. Defaults to `TVIIceTransportPolicyAll`.
  */
 @property (nonatomic, assign, readonly) TVIIceTransportPolicy transportPolicy;
+
+/**
+ *  @brief Whether to abort if ICE servers time out.
+ *
+ *  @discussion If fetching ICE servers times out (due to a restrictive network or a slow network proxy), then, by default,
+ *  the Video SDK will fallback to using hard-coded STUN servers and continue connecting to the Room.
+ *  Setting this property to true will instead abort with error 53500, "Unable to acquire configuration".
+ *  Defaults to 'NO'.
+ */
+@property (nonatomic, assign, readonly) BOOL abortOnIceServersTimeout;
+
+/**
+ *  @brief The timeout to wait (before aborting) when acquiring ICE servers. Defaults to 3 seconds.
+ */
+@property (nonatomic, assign, readonly) NSTimeInterval iceServersTimeout;
 
 /**
  *  @brief Creates a default `TVIIceOptions` instance.

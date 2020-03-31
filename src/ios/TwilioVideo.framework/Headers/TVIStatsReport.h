@@ -9,14 +9,15 @@
 
 @class TVILocalAudioTrackStats;
 @class TVILocalVideoTrackStats;
-@class TVIAudioTrackStats;
-@class TVIVideoTrackStats;
+@class TVIRemoteAudioTrackStats;
+@class TVIRemoteVideoTrackStats;
 @class TVIIceCandidateStats;
 @class TVIIceCandidatePairStats;
 
 /**
  * `TVIStatsReport` contains stats for all tracks associated with a single peer connection.
  */
+NS_SWIFT_NAME(StatsReport)
 @interface TVIStatsReport : NSObject
 
 /**
@@ -37,12 +38,12 @@
 /**
  * @brief The stats for all remote audio tracks in the peer connection.
  */
-@property (nonatomic, strong, readonly, nonnull) NSArray<TVIAudioTrackStats *> *audioTrackStats;
+@property (nonatomic, strong, readonly, nonnull) NSArray<TVIRemoteAudioTrackStats *> *remoteAudioTrackStats;
 
 /**
  * @brief The stats for all remote video tracks in the peer connection.
  */
-@property (nonatomic, strong, readonly, nonnull) NSArray<TVIVideoTrackStats *> *videoTrackStats;
+@property (nonatomic, strong, readonly, nonnull) NSArray<TVIRemoteVideoTrackStats *> *remoteVideoTrackStats;
 
 /**
  * @brief The stats for all Ice candidates.

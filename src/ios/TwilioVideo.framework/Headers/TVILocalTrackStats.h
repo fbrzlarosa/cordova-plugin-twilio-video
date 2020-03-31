@@ -10,6 +10,7 @@
 /**
  * `TVILocalTrackStats` represents stats common to local tracks.
  */
+NS_SWIFT_NAME(LocalTrackStats)
 @interface TVILocalTrackStats : TVIBaseTrackStats
 
 /**

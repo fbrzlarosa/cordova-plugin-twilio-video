@@ -9,7 +9,7 @@
 #import <CoreMedia/CoreMedia.h>
 
 /**
- *  The subset of Core Video pixel formats which are supported by `TVIVideoCaptureConsumer`.
+ *  The subset of Core Video pixel formats which are supported by `TVIVideoSink`.
  */
 typedef NS_ENUM(OSType, TVIPixelFormat) {
     /**
@@ -41,12 +41,14 @@ typedef NS_ENUM(OSType, TVIPixelFormat) {
      *  Planar Component Y'CbCr 8-bit 4:2:0, full range. baseAddr points to a big-endian CVPlanarPixelBufferInfo_YCbCrPlanar struct. 
      */
     TVIPixelFormatYUV420PlanarFullRange = kCVPixelFormatType_420YpCbCr8PlanarFullRange
-};
+}
+NS_SWIFT_NAME(PixelFormat);
 
 /**
- *  `TVIVideoFormat` describes the properties of video content which a `TVIVideoCapturer` produces.
+ *  `TVIVideoFormat` describes the properties of video content which a `TVIVideoSource` produces.
  *  A capturer can support many formats, but only one will be selected when capture is started.
  */
+NS_SWIFT_NAME(VideoFormat)
 @interface TVIVideoFormat : NSObject
 
 /**

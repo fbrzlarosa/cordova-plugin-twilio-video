@@ -10,12 +10,13 @@
 /**
  * `TVIBaseTrackStats` represents stats common to both local and remote tracks.
  */
+NS_SWIFT_NAME(BaseTrackStats)
 @interface TVIBaseTrackStats : NSObject
 
 /**
- * @brief Track identifier.
+ * @brief The Tracks's server identifier. This value uniquely identifies the Track within the scope of a Room.
  */
-@property (nonatomic, copy, readonly, nullable) NSString *trackId;
+@property (nonatomic, copy, readonly, nonnull) NSString *trackSid;
 
 /**
  * @brief Total number of RTP packets lost for this SSRC since the beginning of the reception.
@@ -25,12 +26,12 @@
 /**
  * @brief Name of codec used for this track.
  */
-@property (nonatomic, copy, readonly, nullable) NSString *codec;
+@property (nonatomic, copy, readonly, nonnull) NSString *codec;
 
 /**
  * @brief The SSRC identifier of the source.
  */
-@property (nonatomic, copy, readonly, nullable) NSString *ssrc;
+@property (nonatomic, copy, readonly, nonnull) NSString *ssrc;
 
 /**
  * @brief Unix timestamp in milliseconds

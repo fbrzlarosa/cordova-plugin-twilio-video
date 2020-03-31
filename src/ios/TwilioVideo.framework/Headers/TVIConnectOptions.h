@@ -7,19 +7,40 @@
 
 #import <Foundation/Foundation.h>
 
+#import "TVIAudioCodec.h"
+#import "TVIVideoCodec.h"
+
+@class TVIEncodingParameters;
 @class TVILocalAudioTrack;
+@class TVILocalDataTrack;
 @class TVILocalVideoTrack;
 @class TVIIceOptions;
+@class TVINetworkQualityConfiguration;
 
 /**
  *  `TVIConnectOptionsBuilder` is a builder class for `TVIConnectOptions`.
  */
+NS_SWIFT_NAME(ConnectOptionsBuilder)
 @interface TVIConnectOptionsBuilder : NSObject
 
 /**
  *  @brief A collection of local audio tracks which will be shared in the Room.
  */
 @property (nonatomic, copy, nonnull) NSArray<TVILocalAudioTrack *> *audioTracks;
+
+/**
+ *  @brief Enables or disables automatic Track subcription in Group Rooms.
+ *
+ *  @discussion By default, your LocalParticipant will subscribe to every RemoteParticipant's Tracks. You can disable
+ *  this by setting `automaticSubscriptionEnabled` to `NO`. Note that this does not take effect in Peer-to-Peer (P2P) Rooms,
+ *  where the setting is silently ignored.
+ */
+@property (nonatomic, assign, getter = isAutomaticSubscriptionEnabled) BOOL automaticSubscriptionEnabled;
+
+/**
+ *  @brief A collection of local data tracks which will be shared in the Room.
+ */
+@property (nonatomic, copy, nonnull) NSArray<TVILocalDataTrack *> *dataTracks;
 
 /**
  *  @brief The queue where the Room and associated classes will invoke delegate methods.
@@ -30,6 +51,22 @@
  *  The default value of `nil` indicates that the main dispatch queue will be used.
  */
 @property (nonatomic, strong, nullable) dispatch_queue_t delegateQueue;
+
+/**
+ *  @brief Enables or disables the Dominant Speaker API.
+ *
+ *  @discussion Set this to `YES` to enable the Dominant Speaker API when using Group Rooms. This option has no effect
+ *  in Peer-to-Peer Rooms. The default value is `NO`.
+ */
+@property (nonatomic, assign, getter = isDominantSpeakerEnabled) BOOL dominantSpeakerEnabled;
+
+/**
+ *  @brief Encoding parameters to use when sharing media in the Room.
+ *
+ *  @discussion See `TVIEncodingParameters` for more information. Setting this value to `nil` 
+ *  indicates that default parameters will be chosen by the media engine.
+ */
+@property (nonatomic, strong, nullable) TVIEncodingParameters *encodingParameters;
 
 /**
  *  @brief A custom ICE configuration used to connect to a Room.
@@ -45,15 +82,56 @@
 @property (nonatomic, assign, getter = areInsightsEnabled) BOOL insightsEnabled;
 
 /**
- *  @brief A BOOL which determines if the SDK will attempt to reconnect after returning to the foreground.
+ *  @brief Enables or disables the Network Quality API.
  *
- *  @discussion When the Room is in `TVIRoomStateConnected` state, the SDK attempts to reconnect if the app comes to
- *  foreground within a short period of time. If the app does not come to foreground within a short time, SDK triggers
- *  disconnect. If the Room is in `TVIRoomStateConnecting` state before the app goes to background, the SDK will trigger
- *  disconnect.
- *  By default, this behavior is enabled when CallKit is not used. Set this connect options to `NO` to disable it.
+ *  @discussion Set this to `YES` to enable the Network Quality API when using Group Rooms. This option has no effect
+ *  in Peer-to-Peer Rooms. The default value is `NO`.
  */
-@property (nonatomic, assign, getter = shouldReconnectAfterReturningToForeground) BOOL reconnectAfterReturningToForeground;
+@property (nonatomic, assign, getter = isNetworkQualityEnabled) BOOL networkQualityEnabled;
+
+/**
+ *  @brief Sets the verbosity level for network quality information returned by the Network Quality API.
+ *
+ *  @discussion If a `TVINetworkQualityConfiguration` is not provided, the default configuration is used:
+ *  `TVINetworkQualityVerbosityMinimal` for the Local Participant and `TVINetworkQualityVerbosityNone` for the Remote
+ *  Participants.
+ *
+ *  @see [TVINetworkQualityConfiguration](TVINetworkQualityConfiguration.h)
+ */
+@property (nonatomic, strong, nullable) TVINetworkQualityConfiguration *networkQualityConfiguration;
+
+/**
+ * @brief The collection of preferred audio codecs.
+ *
+ * @discussion The list specifies which audio codecs will be preferred when negotiating audio between participants.
+ * The preferences are applied in the order found in the list starting with the most preferred audio codec to the
+ * least preferred audio codec. Audio codec preferences are not guaranteed to be satisfied because not all participants
+ * are guaranteed to support all audio codecs. `TVIOpusCodec` is the default audio codec if no preferences are set.
+ */
+@property (nonatomic, copy, nonnull) NSArray<TVIAudioCodec *> *preferredAudioCodecs;
+
+/**
+ * @brief The collection of preferred video codecs.
+ *
+ * @discussion The list specifies which video codecs will be preferred when negotiating video between participants.
+ * The preferences are applied in the order found in the list starting with the most preferred video codec to the
+ * least preferred video codec. Video codec preferences are not guaranteed to be satisfied because not all participants
+ * are guaranteed to support all video codecs. `TVIVp8Codec` is the default video codec if no preferences are set.
+ */
+@property (nonatomic, copy, nonnull) NSArray<TVIVideoCodec *> *preferredVideoCodecs;
+
+/**
+ *  @brief The region that the Client will connect to.
+ *
+ *  @discussion By default, the Client will connect to the nearest signaling Server determined by
+ *  <a href="https://www.twilio.com/docs/video/ip-address-whitelisting#signaling-communication">latency based routing</a>.
+ *  Setting a value other than "gll" bypasses routing and guarantees that signaling traffic will be terminated
+ *  in the region that you prefer. If you are connecting to a Group Room created with the "gll" Media Region
+ *  (either <a href="https://www.twilio.com/console/video/configure">Ad-Hoc</a> or via the
+ *  <a href="https://www.twilio.com/docs/video/api/rooms-resource#room-instance-resource">REST API</a>), then the
+ *  Room's Media Region will be selected based upon your Client's region. The default value is `gll`.
+ */
+@property (nonatomic, copy, nonnull) NSString *region;
 
 /**
  *  @brief The name of the Room which you want to connect to.
@@ -93,15 +171,17 @@
 /**
  *  `TVIConnectOptionsBuilderBlock` allows you to construct `TVIConnectOptions` using the builder pattern.
  *
- *  @param builder The builder
+ *  @param builder The builder.
  */
-typedef void (^TVIConnectOptionsBuilderBlock)(TVIConnectOptionsBuilder * _Nonnull builder);
+typedef void (^TVIConnectOptionsBuilderBlock)(TVIConnectOptionsBuilder * _Nonnull builder)
+NS_SWIFT_NAME(ConnectOptionsBuilder.Block);
 
 /**
  *  @brief `TVIConnectOptions` represents a custom configuration to use when connecting to a Room.
  *
  *  @discussion This configuration overrides what was provided in `TVIClientOptions`.
  */
+NS_SWIFT_NAME(ConnectOptions)
 @interface TVIConnectOptions : NSObject
 
 /**
@@ -115,6 +195,20 @@ typedef void (^TVIConnectOptionsBuilderBlock)(TVIConnectOptionsBuilder * _Nonnul
 @property (nonatomic, copy, readonly, nonnull) NSArray<TVILocalAudioTrack *> *audioTracks;
 
 /**
+ *  @brief Enables or disables automatic Track subcription in Group Rooms.
+ *
+ *  @discussion By default, your LocalParticipant will subscribe to every RemoteParticipant's Tracks. You can disable
+ *  this by setting `automaticSubscriptionEnabled` to `NO`. Note that this does not take effect in Peer-to-Peer (P2P) Rooms,
+ *  where the setting is silently ignored.
+ */
+@property (nonatomic, assign, readonly, getter = isAutomaticSubscriptionEnabled) BOOL automaticSubscriptionEnabled;
+
+/**
+ *  @brief A collection of local data tracks which will be shared in the Room.
+ */
+@property (nonatomic, copy, readonly, nonnull) NSArray<TVILocalDataTrack *> *dataTracks;
+
+/**
  *  @brief The queue where the Room and associated classes will invoke delegate methods.
  *
  *  @discussion All delegate methods except for `TVIVideoViewDelegate` and `TVICameraCaptureDelegate`
@@ -123,6 +217,22 @@ typedef void (^TVIConnectOptionsBuilderBlock)(TVIConnectOptionsBuilder * _Nonnul
  *  The default value of `nil` indicates that the main dispatch queue will be used.
  */
 @property (nonatomic, strong, readonly, nullable) dispatch_queue_t delegateQueue;
+
+/**
+ *  @brief Enables or disables the Dominant Speaker API.
+ *
+ *  @discussion Set this to `YES` to enable the Dominant Speaker API when using Group Rooms. This option has no effect
+ *  in Peer-to-Peer Rooms. The default value is `NO`.
+ */
+@property (nonatomic, assign, readonly, getter = isDominantSpeakerEnabled) BOOL dominantSpeakerEnabled;
+
+/**
+ *  @brief Encoding parameters to use when sharing media in the Room.
+ *
+ *  @discussion See `TVIEncodingParameters` for more information. Setting this value to `nil`
+ *  indicates that default parameters will be chosen by the media engine.
+ */
+@property (nonatomic, strong, readonly, nullable) TVIEncodingParameters *encodingParameters;
 
 /**
  *  @brief A custom ICE configuration used to connect to a Room.
@@ -138,15 +248,56 @@ typedef void (^TVIConnectOptionsBuilderBlock)(TVIConnectOptionsBuilder * _Nonnul
 @property (nonatomic, assign, readonly, getter = areInsightsEnabled) BOOL insightsEnabled;
 
 /**
- *  @brief A BOOL which determines if the SDK will attempt to reconnect after returning to the foreground.
+ *  @brief Enables or disables the Network Quality API.
  *
- *  @discussion When the Room is in `TVIRoomStateConnected` state, the SDK attempts to reconnect if the app comes to
- *  foreground within a short period of time. If the app does not come to foreground within a short time, SDK triggers
- *  disconnect. If the Room is in `TVIRoomStateConnecting` state before the app goes to background, the SDK will trigger
- *  disconnect.
- *  By default, this behavior is enabled when CallKit is not used. Set this connect options to `NO` to disable it.
+ *  @discussion Set this to `YES` to enable the Network Quality API when using Group Rooms. This option has no effect
+ *  in Peer-to-Peer Rooms. The default value is `NO`.
  */
-@property (nonatomic, assign, readonly, getter = shouldReconnectAfterReturningToForeground) BOOL reconnectAfterReturningToForeground;
+@property (nonatomic, assign, readonly, getter = isNetworkQualityEnabled) BOOL networkQualityEnabled;
+
+/**
+ *  @brief Sets the verbosity level for network quality information returned by the Network Quality API.
+ *
+ *  @discussion If a `TVINetworkQualityConfiguration` is not provided, the default configuration is used:
+ *  `TVINetworkQualityVerbosityMinimal` for the Local Participant and `TVINetworkQualityVerbosityNone` for the Remote
+ *  Participants.
+ *
+ *  @see [TVINetworkQualityConfiguration](TVINetworkQualityConfiguration.h)
+ */
+@property (nonatomic, strong, readonly, nullable) TVINetworkQualityConfiguration *networkQualityConfiguration;
+
+/**
+ * @brief The collection of preferred audio codecs.
+ *
+ * @discussion The list specifies which audio codecs will be preferred when negotiating audio between participants.
+ * The preferences are applied in the order found in the list starting with the most preferred audio codec to the
+ * least preferred audio codec. Audio codec preferences are not guaranteed to be satisfied because not all participants
+ * are guaranteed to support all audio codecs. `TVIOpusCodec` is the default audio codec if no preferences are set.
+ */
+@property (nonatomic, copy, readonly, nonnull) NSArray<TVIAudioCodec *> *preferredAudioCodecs;
+
+/**
+ * @brief The collection of preferred video codecs.
+ *
+ * @discussion The list specifies which video codecs will be preferred when negotiating video between participants.
+ * The preferences are applied in the order found in the list starting with the most preferred video codec to the
+ * least preferred video codec. Video codec preferences are not guaranteed to be satisfied because not all participants
+ * are guaranteed to support all video codecs. `TVIVp8Codec` is the default video codec if no preferences are set.
+ */
+@property (nonatomic, copy, readonly, nonnull) NSArray<TVIVideoCodec *> *preferredVideoCodecs;
+
+/**
+ *  @brief The region that the Client will connect to.
+ *
+ *  @discussion By default, the Client will connect to the nearest signaling Server determined by
+ *  <a href="https://www.twilio.com/docs/video/ip-address-whitelisting#signaling-communication">latency based routing</a>.
+ *  Setting a value other than "gll" bypasses routing and guarantees that signaling traffic will be terminated
+ *  in the region that you prefer. If you are connecting to a Group Room created with the "gll" Media Region
+ *  (either <a href="https://www.twilio.com/console/video/configure">Ad-Hoc</a> or via the
+ *  <a href="https://www.twilio.com/docs/video/api/rooms-resource#room-instance-resource">REST API</a>), then the
+ *  Room's Media Region will be selected based upon your Client's region. The default value is `gll`.
+ */
+@property (nonatomic, copy, readonly, nonnull) NSString *region;
 
 /**
  *  @brief The name of the Room which you want to connect to.

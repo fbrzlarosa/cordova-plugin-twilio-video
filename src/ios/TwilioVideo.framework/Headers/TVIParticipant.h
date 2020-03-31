@@ -7,112 +7,142 @@
 
 #import <Foundation/Foundation.h>
 
-@class TVIParticipant;
-@class TVIVideoTrack;
-@class TVIAudioTrack;
-@class TVITrack;
-@protocol TVIParticipantDelegate;
+@class TVITrackPublication;
+@class TVIAudioTrackPublication;
+@class TVIVideoTrackPublication;
+@class TVIDataTrackPublication;
 
 /**
- *  `TVIParticipant` represents a remote Participant in a Room which you are connected to.
+ *  @brief `TVINetworkQualityLevel` represents the Network Quality Level.
+ *
+ *  @discussion Twilio's Video SDKs, where possible, attempt to calculate a singular Network Quality Level describing
+ *  the quality of a Participant's connection to a Room. This value ranges from -1 to 5, with -1 representing that the
+ *  Network Quality Level can not be determined, 0 representing a failed network connection, 1 representing a poor
+ *  network connection, and 5 representing an excellent network connection. The SDK calculates this metric only when
+ *  connected to Group Rooms. In case of a connection to Peer-to-Peer Room the value is expected to be -1 at all times.
+ *
+ *  Note that the Network Quality Level is not an absolute metric but a score relative to the demand being placed on
+ *  the network. For example, the NQ score might be a 5 while on a good network and publishing only an AudioTrack.
+ *  Later, if a HD VideoTrack is added, the score might come down to 2. This also means that when the network is not
+ *  being used at all (i.e. the Client is neither publishing nor subscribing to any tracks) the Network Quality Level
+ *  will always be 5 given that any network will be capable of complying with a zero communications demand.
  */
+typedef NS_ENUM(NSInteger, TVINetworkQualityLevel) {
+    /**
+     *  The Network Quality Level cannot be determined or the Network Quality API has not been enabled.
+     */
+    TVINetworkQualityLevelUnknown = -1,
+    /**
+     *  The network connection has failed.
+     */
+    TVINetworkQualityLevelZero = 0,
+    /**
+     *  The Network Quality is Very Bad.
+     */
+    TVINetworkQualityLevelOne,
+    /**
+     *  The Network Quality is Bad.
+     */
+    TVINetworkQualityLevelTwo,
+    /**
+     *  The Network Quality is Good.
+     */
+    TVINetworkQualityLevelThree,
+    /**
+     *  The Network Quality is Very Good.
+     */
+    TVINetworkQualityLevelFour,
+    /**
+     *  The Network Quality is Excellent.
+     */
+    TVINetworkQualityLevelFive
+}
+NS_SWIFT_NAME(NetworkQualityLevel);
+
+/**
+ *  `TVIParticipant` is the base class from which Local and Remote Participants are derived.
+ */
+NS_SWIFT_NAME(Participant)
 @interface TVIParticipant : NSObject
-
-/**
- *  @brief Indicates if the Participant is connected to the Room.
- */
-@property (nonatomic, assign, readonly, getter=isConnected) BOOL connected;
-
-/**
- *  @brief The Participant's delegate. Set this property to be notified about Participant events such as tracks being 
- *  added or removed.
- */
-@property (atomic, weak, nullable) id<TVIParticipantDelegate> delegate;
 
 /**
  *  @brief The Participant's identity.
  */
-@property (nonatomic, readonly, copy, nonnull) NSString *identity;
+@property (nonatomic, copy, readonly, nonnull) NSString *identity;
 
 /**
- *  @sid The Participant's server identifier. This value uniquely identifies the Participant in a Room and is often 
+ *  @brief The Participant's server identifier. This value uniquely identifies the Participant in a Room and is often 
  *  useful for debugging purposes.
  */
-@property (nonatomic, readonly, copy, nullable) NSString *sid;
+@property (nonatomic, copy, readonly, nullable) NSString *sid;
+
+/**
+ *  @brief The Participant's Network Quality Level
+ *
+ *  @discussion This property represents the quality of a Participant's connection in a Room. This value may not
+ *  be immediately available, and, in some cases, it's impossible to calculate it. In these instances,
+ *  `networkQualityLevel` will return `TVINetworkQualityLevelUnknown`. Calling this API in a Peer-to-Peer Room will
+ *  always return `TVINetworkQualityLevelUnknown`. This is part of the Network Quality API and must be enabled by
+ *  enabling the `networkQualityEnabled` option in `TVIConnectOptions`.
+ */
+@property (nonatomic, assign, readonly) TVINetworkQualityLevel networkQualityLevel;
 
 /**
  *  @brief A collection of shared audio tracks.
  */
-@property (nonatomic, copy, readonly, nonnull) NSArray<TVIAudioTrack *> *audioTracks;
+@property (nonatomic, copy, readonly, nonnull) NSArray<TVIAudioTrackPublication *> *audioTracks;
 
 /**
  *  @brief A collection of shared video tracks.
  */
-@property (nonatomic, copy, readonly, nonnull) NSArray<TVIVideoTrack *> *videoTracks;
+@property (nonatomic, copy, readonly, nonnull) NSArray<TVIVideoTrackPublication *> *videoTracks;
+
+/**
+ *  @brief A collection of shared data tracks.
+ */
+@property (nonatomic, copy, readonly, nonnull) NSArray<TVIDataTrackPublication *> *dataTracks;
 
 /**
  *  @brief Developers shouldn't initialize this class directly.
  *
- *  @discussion Use `TwilioVideo` connectWith* methods to join a `TVIRoom` with `TVIParticipant` instances.
+ *  @discussion `TVIParticipant` cannot be created explicitly.
  */
-- (null_unspecified instancetype)init __attribute__((unavailable("Use TwilioVideo connectWith* methods to join a TVIRoom with TVIParticipant instances.")));
+- (null_unspecified instancetype)init __attribute__((unavailable("TVIParticipant cannot be created explicitly.")));
+
+/**
+ *  @brief A utility method which finds a `TVITrackPublication` by its `sid`.
+ *
+ *  @param sid The track sid.
+ *
+ *  @return An instance of `TVITrackPublication` if found, otherwise `nil`.
+ */
+- (nullable TVITrackPublication *)getTrack:(nonnull NSString *)sid;
+
+/**
+ *  @brief A utility method which finds a `TVIAudioTrackPublication` by its `sid`.
+ *
+ *  @param sid The track sid.
+ *
+ *  @return An instance of `TVIAudioTrackPublication` if found, otherwise `nil`.
+ */
+- (nullable TVIAudioTrackPublication *)getAudioTrack:(nonnull NSString *)sid;
+
+/**
+ *  @brief A utility method which finds a `TVIVideoTrackPublication` by its `sid`.
+ *
+ *  @param sid The track sid.
+ *
+ *  @return An instance of `TVIVideoTrackPublication` if found, otherwise `nil`.
+ */
+- (nullable TVIVideoTrackPublication *)getVideoTrack:(nonnull NSString *)sid;
+
+/**
+ *  @brief A utility method which finds a `TVIDataTrackPublication` by its `sid`.
+ *
+ *  @param sid The track sid.
+ *
+ *  @return An instance of `TVIDataTrackPublication` if found, otherwise `nil`.
+ */
+- (nullable TVIDataTrackPublication *)getDataTrack:(nonnull NSString *)sid;
 
 @end
-
-/**
- *  `TVIParticipantDelegate` provides callbacks when important changes to a `TVIParticipant` occur.
- */
-@protocol TVIParticipantDelegate <NSObject>
-
-@optional
-/**
- *  @brief Delegate method called when the Participant adds a video track.
- *
- *  @param participant The Participant who added the video.
- *  @param videoTrack  The added video track. You can use `TVIVideoTrack`'s attach API or add a renderer to it
- *  to display the Participant's video feed.
- */
-- (void)participant:(nonnull TVIParticipant *)participant addedVideoTrack:(nonnull TVIVideoTrack *)videoTrack;
-
-/**
- *  @brief Delegate method called when the Participant removes a video track.
- *
- *  @param participant The Participant.
- *  @param videoTrack  The removed video track.
- */
-- (void)participant:(nonnull TVIParticipant *)participant removedVideoTrack:(nonnull TVIVideoTrack *)videoTrack;
-
-/**
- *  @brief Delegate method called when the Participant adds an audio track.
- *
- *  @param participant The Participant.
- *  @param audioTrack  The added audio track.
- */
-- (void)participant:(nonnull TVIParticipant *)participant addedAudioTrack:(nonnull TVIAudioTrack *)audioTrack;
-
-/**
- *  @brief Delegate method called when the Participant removes an audio track.
- *
- *  @param participant The Participant.
- *  @param audioTrack  The removed audio track.
- */
-- (void)participant:(nonnull TVIParticipant *)participant removedAudioTrack:(nonnull TVIAudioTrack *)audioTrack;
-
-/**
- *  @brief Delegate method called when the Participant enables a track.
- *
- *  @param participant The Participant.
- *  @param track       The track.
- */
-- (void)participant:(nonnull TVIParticipant *)participant enabledTrack:(nonnull TVITrack *)track;
-
-/**
- *  @brief Delegate method called when the Participant disables a track.
- *
- *  @param participant The Participant.
- *  @param track       The track.
- */
-- (void)participant:(nonnull TVIParticipant *)participant disabledTrack:(nonnull TVITrack *)track;
-
-@end
-

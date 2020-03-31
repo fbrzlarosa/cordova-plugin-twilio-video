@@ -10,6 +10,7 @@
 /**
  * `TVIIceCandidateStats` reflects the properties of a candidate in Section 15.1 in [RFC5245].
  */
+NS_SWIFT_NAME(IceCandidateStats)
 @interface TVIIceCandidateStats : NSObject
 
 /**

@@ -10,6 +10,7 @@
 /**
  *  TVIAudioSink consumes raw audio content from a TVIAudioTrack.
  */
+NS_SWIFT_NAME(AudioSink)
 @protocol TVIAudioSink <NSObject>
 
 /**

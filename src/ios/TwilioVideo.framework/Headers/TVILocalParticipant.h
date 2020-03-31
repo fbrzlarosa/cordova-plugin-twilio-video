@@ -5,79 +5,203 @@
 //  Copyright © 2016-2017 Twilio, Inc. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import "TVIParticipant.h"
+
+@protocol TVILocalParticipantDelegate;
+
+@class TVIEncodingParameters;
+
+@class TVILocalAudioTrackPublication;
+@class TVILocalDataTrackPublication;
+@class TVILocalVideoTrackPublication;
 
 @class TVILocalAudioTrack;
+@class TVILocalDataTrack;
 @class TVILocalVideoTrack;
 
 /**
- *  `TVILocalParticipant` represents your Client in a Room which you are connected to.
+ *  `TVILocalParticipant` represents your Participant in a Room which you are connected to.
  */
-@interface TVILocalParticipant : NSObject
+NS_SWIFT_NAME(LocalParticipant)
+@interface TVILocalParticipant : TVIParticipant
 
 /**
- *  @brief The identity of the `TVILocalParticipant`.
+ *  @brief The Local Participant's delegate. Set this property to be notified about Participant events such as tracks being
+ *  published.
  */
-@property (nonatomic, readonly, copy, nonnull) NSString *identity;
+@property (atomic, weak, nullable) id<TVILocalParticipantDelegate> delegate;
 
 /**
- *  @brief The LocalParticipant's server identifier. This value uniquely identifies your Client in a Room and is often
- *  useful for debugging purposes.
+ * @brief A collection of `TVILocalAudioTrackPublication` objects.
  */
-@property (nonatomic, readonly, copy, nonnull) NSString *sid;
+@property (nonatomic, copy, readonly, nonnull) NSArray<TVILocalAudioTrackPublication *> *localAudioTracks;
+
+/**
+ * @brief A collection of `TVILocalDataTrackPublication` objects.
+ */
+@property (nonatomic, copy, readonly, nonnull) NSArray<TVILocalDataTrackPublication *> *localDataTracks;
+
+/**
+ * @brief A collection of `TVILocalVideoTrackPublication` objects.
+ */
+@property (nonatomic, copy, readonly, nonnull) NSArray<TVILocalVideoTrackPublication *> *localVideoTracks;
+
+/**
+ *  @brief Where the Participant's signaling traffic enters and exits Twilio's communications cloud.
+ *  This property reflects the `TVIConnectOptions.region` provided by the Participant and when "gll"
+ *  (the default value) is provided, the region that was selected using latency based routing.
+ */
+@property (nonatomic, copy, readonly, nonnull) NSString *signalingRegion;
+
+/**
+ *  @brief Publishes the audio track to the Room.
+ *
+ *  @param track The `TVILocalAudioTrack` to publish.
+ *
+ *  @return `YES` if the track was published successfully, `NO` otherwise.
+ */
+- (BOOL)publishAudioTrack:(nonnull TVILocalAudioTrack *)track;
+
+/**
+ *  @brief Publishes the data track to the Room.
+ *
+ *  @param track The `TVILocalDataTrack` to publish.
+ *
+ *  @return `YES` if the track was published successfully, `NO` otherwise.
+ */
+- (BOOL)publishDataTrack:(nonnull TVILocalDataTrack *)track;
+
+/**
+ *  @brief Publishes the video track to the Room.
+ *
+ *  @param track The `TVILocalVideoTrack` to publish.
+ *
+ *  @return `YES` if the track was published successfully, `NO` otherwise.
+ */
+- (BOOL)publishVideoTrack:(nonnull TVILocalVideoTrack *)track;
+
+/**
+ *  @brief Unpublishes the audio track from the Room.
+ *
+ *  @param track The `TVILocalAudioTrack` to unpublish.
+ *
+ *  @return `YES` if the track was unpublished successfully, `NO` otherwise.
+ */
+- (BOOL)unpublishAudioTrack:(nonnull TVILocalAudioTrack *)track;
+
+/**
+ *  @brief Unpublishes the data track from the Room.
+ *
+ *  @param track The `TVILocalDataTrack` to unpublish.
+ *
+ *  @return `YES` if the track was unpublished successfully, `NO` otherwise.
+ */
+- (BOOL)unpublishDataTrack:(nonnull TVILocalDataTrack *)track;
+
+/**
+ *  @brief Unpublishes the video track from the Room.
+ *
+ *  @param track The `TVILocalVideoTrack` to unpublish.
+ *
+ *  @return `YES` if the track was unpublished successfully, `NO` otherwise.
+ */
+- (BOOL)unpublishVideoTrack:(nonnull TVILocalVideoTrack *)track;
+
+/**
+ *  @brief Updates the `TVIEncodingParameters` used to share media in the Room.
+ *
+ *  @param encodingParameters The `TVIEncodingParameters` to use or `nil` for the default values.
+ */
+- (void)setEncodingParameters:(nullable TVIEncodingParameters *)encodingParameters;
 
 /**
  *  @brief Developers shouldn't initialize this class directly.
  *
  *  @discussion Use `TwilioVideo` connectWith* methods to join a `TVIRoom` and query its `localParticipant` property.
  */
-- (null_unspecified instancetype)init __attribute__((unavailable("Use TwilioVideo connectWith* methods to join a TVIRoom and query its `localParticipant` property.")));
+- (null_unspecified instancetype)init __attribute__((unavailable("Use TwilioVideoSDK connectWith* methods to join a TVIRoom and query its `localParticipant` property.")));
+
+@end
 
 /**
- *  @brief The collection of local audio tracks being shared in the Room.
+ *  `TVILocalParticipantDelegate` provides callbacks when important events happen to a `TVILocalParticipant`.
  */
-@property (nonatomic, copy, readonly, nonnull) NSArray<TVILocalAudioTrack *> *audioTracks;
+NS_SWIFT_NAME(LocalParticipantDelegate)
+@protocol TVILocalParticipantDelegate <NSObject>
+
+@optional
 
 /**
- *  @brief The collection of local video tracks being shared in the Room.
+ * @brief Delegate method called when the Local Participant successfully publishes an audio track.
+ *
+ * @param participant The local participant.
+ * @param audioTrackPublication The `TVILocalAudioTrackPublication` object.
  */
-@property (nonatomic, copy, readonly, nonnull) NSArray<TVILocalVideoTrack *> *videoTracks;
+- (void)localParticipant:(nonnull TVILocalParticipant *)participant didPublishAudioTrack:(nonnull TVILocalAudioTrackPublication *)audioTrackPublication
+NS_SWIFT_NAME(localParticipantDidPublishAudioTrack(participant:audioTrackPublication:));
+
 
 /**
- *  @brief Adds a Track to the LocalParticipant, sharing it in the Room.
+ * @brief Delegate method called when the publication of an audio track fails.
  *
- *  @param track The `TVILocalAudioTrack` which you would like to share.
- *
- *  @return `YES` if the track was added successfully, `NO` otherwise.
+ * @param participant The local participant.
+ * @param audioTrack The audio track that failed publication.
+ * @param error An `NSError` object describing the reason for the failure.
  */
-- (BOOL)addAudioTrack:(nonnull TVILocalAudioTrack *)track;
+- (void)localParticipant:(nonnull TVILocalParticipant *)participant
+didFailToPublishAudioTrack:(nonnull TVILocalAudioTrack *)audioTrack
+               withError:(nonnull NSError *)error
+NS_SWIFT_NAME(localParticipantDidFailToPublishAudioTrack(participant:audioTrack:error:));
 
 /**
- *  @brief Adds a Track to the LocalParticipant, sharing it in the Room.
+ * @brief Delegate method called when the Local Participant successfully publishes a data track.
  *
- *  @param track The `TVILocalVideoTrack` which you would like to share.
- *
- *  @return `YES` if the track was added successfully, `NO` otherwise.
+ * @param participant The local participant.
+ * @param dataTrackPublication The `TVILocalDataTrackPublication` object.
  */
-- (BOOL)addVideoTrack:(nonnull TVILocalVideoTrack *)track;
+- (void)localParticipant:(nonnull TVILocalParticipant *)participant didPublishDataTrack:(nonnull TVILocalDataTrackPublication *)dataTrackPublication
+NS_SWIFT_NAME(localParticipantDidPublishDataTrack(participant:dataTrackPublication:));
 
 /**
- *  @brief Removes a Track from the LocalParticipant, un-sharing it from the Room.
+ * @brief Delegate method called when the publication of a data track fails.
  *
- *  @param track The `TVILocalVideoTrack` which you would like to remove.
- *
- *  @return `YES` if the track was removed successfully, `NO` otherwise.
+ * @param participant The local participant.
+ * @param dataTrack The data track that failed publication.
+ * @param error An `NSError` object describing the reason for the failure.
  */
-- (BOOL)removeAudioTrack:(nonnull TVILocalAudioTrack *)track;
+- (void)localParticipant:(nonnull TVILocalParticipant *)participant
+didFailToPublishDataTrack:(nonnull TVILocalDataTrack *)dataTrack
+               withError:(nonnull NSError *)error
+NS_SWIFT_NAME(localParticipantDidFailToPublishDataTrack(participant:dataTrack:error:));
 
 /**
- *  @brief Removes a Track from the LocalParticipant, un-sharing it from the Room.
+ * @brief Delegate method called when the Local Participant successfully publishes a video track.
  *
- *  @param track The `TVILocalVideoTrack` which you would like to remove.
- *
- *  @return `YES` if the track was removed successfully, `NO` otherwise.
+ * @param participant The local participant.
+ * @param videoTrackPublication The `TVILocalVideoTrackPublication` object.
  */
-- (BOOL)removeVideoTrack:(nonnull TVILocalVideoTrack *)track;
+- (void)localParticipant:(nonnull TVILocalParticipant *)participant didPublishVideoTrack:(nonnull TVILocalVideoTrackPublication *)videoTrackPublication
+NS_SWIFT_NAME(localParticipantDidPublishVideoTrack(participant:videoTrackPublication:));
 
+/**
+ * @brief Delegate method called when the publication of a video track fails.
+ *
+ * @param participant The local participant.
+ * @param videoTrack The video track that failed publication.
+ * @param error An `NSError` object describing the reason for the failure.
+ */
+- (void)localParticipant:(nonnull TVILocalParticipant *)participant
+didFailToPublishVideoTrack:(nonnull TVILocalVideoTrack *)videoTrack
+               withError:(nonnull NSError *)error
+NS_SWIFT_NAME(localParticipantDidFailToPublishVideoTrack(participant:videoTrack:error:));
+
+/**
+ * @brief Delegate method called when the Local Participant's `networkQualityLevel` has changed.
+ *
+ * @param participant The local participant.
+ * @param networkQualityLevel The new Network Quality Level.
+ */
+- (void)localParticipant:(nonnull TVILocalParticipant *)participant networkQualityLevelDidChange:(TVINetworkQualityLevel)networkQualityLevel
+NS_SWIFT_NAME(localParticipantNetworkQualityLevelDidChange(participant:networkQualityLevel:));
 
 @end
