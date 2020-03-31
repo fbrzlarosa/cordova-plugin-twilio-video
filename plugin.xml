@@ -13,9 +13,6 @@
         <engine name="cordova" version=">=4.0.0" />
     </engines>
     <platform name="ios">
-    	<!--<hook type="after_plugin_install" src="hooks/embed/embed.js" />
-		<hook type="before_build" src="hooks/embed/embed.js" />
-		-->
         <config-file parent="/*" target="config.xml">
             <feature name="VideoConversationPlugin">
                 <param name="ios-package" value="TwilioVideoPlugin" />
@@ -47,7 +44,7 @@
         <config-file target="*-Info.plist" parent="NSMicrophoneUsageDescription">
             <string>$MICROPHONE_USAGE_DESCRIPTION</string>
         </config-file>
-        <framework src="TwilioVideo" type="podspec" spec="1.4.3" embed="true" />
+        <framework src="TwilioVideo" type="podspec" spec="2.1.0" embed="true" />
     </platform>
     <platform name="android">
         <hook type="after_plugin_install" src="hooks/after_plugin_install/hook-add-r-import.js" />
