@@ -1,4 +1,4 @@
-package cordova.plugin.twilio.video;
+package cordova-plugin-twilio-video;
 
 import android.Manifest;
 import android.content.Context;

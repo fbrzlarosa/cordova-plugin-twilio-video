@@ -1,4 +1,4 @@
-package cordova.plugin.twilio.video;
+package cordova-plugin-twilio-video;
 
 import org.json.JSONObject;
 

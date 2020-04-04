@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <plugin 
-    id="cordova.plugin.twilio.video"
+    id="cordova-plugin-twilio-video"
     version="0.2.0" 
     xmlns="http://apache.org/cordova/ns/plugins/1.0"
     xmlns:android="http://schemas.android.com/apk/res/android">
@@ -54,7 +54,7 @@
         <hook type="after_plugin_install" src="hooks/after_plugin_install/hook-add-r-import.js" />
         <config-file target="res/xml/config.xml" parent="/*">
             <feature name="VideoConversationPlugin">
-                <param name="android-package" value="cordova.plugin.twilio.video.VideoConversationPlugin" />
+                <param name="android-package" value="cordova-plugin-twilio-video.VideoConversationPlugin" />
             </feature>
         </config-file>
         <config-file target="AndroidManifest.xml" parent="/*">
@@ -70,7 +70,7 @@
         </config-file>
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
             <activity 
-                android:name="cordova.plugin.twilio.video.ConversationActivity"
+                android:name="cordova-plugin-twilio-video.ConversationActivity"
                 android:configChanges="orientation|screenSize" 
                 android:theme="@style/Theme.AppCompat.Light.NoActionBar">
             </activity>
