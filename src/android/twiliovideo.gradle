@@ -2,10 +2,12 @@ repositories {
     jcenter()
 }
 
+// The Video library resides on jcenter
+implementation 'com.twilio:video-android:5.9.0'
 
-dependencies {
-    compile 'com.twilio:video-android:1.1.0'
-    compile 'com.koushikdutta.ion:ion:2.1.7'
-    compile 'com.android.support:appcompat-v7:28.0.0'
-    compile 'com.android.support:design:28.0.0'
+android {
+    compileOptions {
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
+    }
 }

@@ -1,11 +1,28 @@
 {
-    "version": "0.2.0",
-    "name": "cordova-plugin-twilio-video",
-    "cordova_name": "Twilio video room plugin",
-    "license": "Apache 2.0",
+  "name": "cordova-plugin-twilio-video",
+  "version": "1.0.0",
+  "description": "Cordova Twilio Video Plugin",
+  "cordova": {
+    "id": "cordova.plugin.twilio.video.VideoConversationPlugin",
     "platforms": [
-        "android",
-        "ios"
-    ],
-    "engines": []
+      "android",
+      "ios"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TruewindIT/cordova-plugin-twilio-video.git"
+  },
+  "keywords": [
+    "ecosystem:cordova",
+    "cordova-android",
+    "cordova-ios"
+  ],
+  "engines": {},
+  "author": "Truewind IT",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/TruewindIT/cordova-plugin-twilio-video/issues"
+  },
+  "homepage": "https://github.com/TruewindIT/cordova-plugin-twilio-video#readme"
 }
