@@ -11,8 +11,8 @@
 
     <com.twilio.video.VideoView
         android:id="@+id/thumbnail_video_view"
-        app:tviOverlaySurface="true"
-        app:tviMirror="true"
+        app:overlaySurface="true"
+        app:Mirror="true"
         android:visibility="gone"
         android:layout_width="96dp"
         android:layout_height="96dp"
