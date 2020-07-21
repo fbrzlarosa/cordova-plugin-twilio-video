@@ -7,12 +7,13 @@ Cordova Plugin for Twilio Video
 
 Open connection:
 ```
-cordova.videoconversation.open($parameters.RoomName,$parameters.AccessToken, function(e){
-    alert(e.event);
-    if( e!== undefined && e!== null && ( ( typeof e !== object && e.toUpperCase() === "PARTICIPANT_DISCONNECTED" ) || ( typeof e === object && e.event === "PARTICIPANT_DISCONNECTED" ) ) ) {
-        alert('Twilio Participant Disconnect fired');
-    }
-}, function(error) {
-    alert(error);
-});
+window.TwilioVideo.openRoom = function(token, room, eventCallback, config) {
+    config = config != null ? config : null;
+    exec(function(e) {
+        console.log("Twilio video event fired: " + e);
+        if (eventCallback) {
+            eventCallback(e.event, e.data);
+        }
+    }, null, 'TwilioVideoPlugin', 'openRoom', [token, room, config]);
+};
 ```
