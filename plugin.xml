@@ -14,8 +14,7 @@
     </js-module>
 
     <engines>
-        <engine name="cordova" version=">=7.0.0" />
-        <engine name="cordova-ios" version=">=5.1.0" />
+        <engine name="cordova" version=">=4.0.0" />
     </engines>
 
     <!-- iOS -->
@@ -95,14 +94,13 @@
             </activity>
         </config-file>
 
-        <framework src="src/android/twiliovideo.gradle" custom="true" type="gradleReference" />
-
 		<source-file src="src/android/CallEvent.java" target-dir="src/org/apache/cordova/twiliovideo" />
 		<source-file src="src/android/CallEventsProducer.java" target-dir="src/org/apache/cordova/twiliovideo" />
 		<source-file src="src/android/CallObserver.java" target-dir="src/org/apache/cordova/twiliovideo" />
         <source-file src="src/android/VideoConversationPlugin.java" target-dir="src/org/apache/cordova/twiliovideo" />
         <source-file src="src/android/ConversationActivity.java" target-dir="src/org/apache/cordova/twiliovideo" />
         <source-file src="src/android/Dialog.java" target-dir="src/org/apache/cordova/twiliovideo" />
+        <framework src="src/android/twiliovideo.gradle" custom="true" type="gradleReference" />
 
         <resource-file src="src/android/res/drawable/ic_call_black_24dp.xml" target="res/drawable/ic_call_black_24dp.xml" />
         <resource-file src="src/android/res/drawable/ic_call_end_white_24px.xml" target="res/drawable/ic_call_end_white_24px.xml" />
