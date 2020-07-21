@@ -79,9 +79,6 @@
 
         <!--  AndroidManifest Changes - Permissions-->
         <config-file target="AndroidManifest.xml" parent="/*">
-            <uses-feature android:name="android.hardware.camera" />
-			<uses-feature android:name="android.hardware.camera.autofocus" android:required="false" />
-			<uses-feature android:glEsVersion="0x00020000" android:required="true" />
             <uses-permission android:name="android.permission.CAMERA" />
             <uses-permission android:name="android.permission.INTERNET" />
             <uses-permission android:name="android.permission.RECORD_AUDIO" />
@@ -100,12 +97,12 @@
 
         <framework src="src/android/twiliovideo.gradle" custom="true" type="gradleReference" />
 
-		<source-file src="src/android/CallEvent.java" target-dir="src/com/ekreative/cordova/videoconversations" />
-		<source-file src="src/android/CallEventsProducer.java" target-dir="src/com/ekreative/cordova/videoconversations" />
-		<source-file src="src/android/CallObserver.java" target-dir="src/com/ekreative/cordova/videoconversations" />
-        <source-file src="src/android/VideoConversationPlugin.java" target-dir="src/com/ekreative/cordova/videoconversations" />
-        <source-file src="src/android/ConversationActivity.java" target-dir="src/com/ekreative/cordova/videoconversations" />
-        <source-file src="src/android/Dialog.java" target-dir="src/com/ekreative/cordova/videoconversations" />
+		<source-file src="src/android/CallEvent.java" target-dir="src/org/apache/cordova/twiliovideo" />
+		<source-file src="src/android/CallEventsProducer.java" target-dir="src/org/apache/cordova/twiliovideo" />
+		<source-file src="src/android/CallObserver.java" target-dir="src/org/apache/cordova/twiliovideo" />
+        <source-file src="src/android/VideoConversationPlugin.java" target-dir="src/org/apache/cordova/twiliovideo" />
+        <source-file src="src/android/ConversationActivity.java" target-dir="src/org/apache/cordova/twiliovideo" />
+        <source-file src="src/android/Dialog.java" target-dir="src/org/apache/cordova/twiliovideo" />
 
         <resource-file src="src/android/res/drawable/ic_call_black_24dp.xml" target="res/drawable/ic_call_black_24dp.xml" />
         <resource-file src="src/android/res/drawable/ic_call_end_white_24px.xml" target="res/drawable/ic_call_end_white_24px.xml" />
