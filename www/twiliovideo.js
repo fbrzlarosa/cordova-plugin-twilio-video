@@ -1,42 +1,43 @@
 exec = require('cordova/exec');
 
-var TwilioVideo = function() {};
+var TwilioVideo = function () {
+};
 
-TwilioVideo.openRoom = function(token, room, eventCallback, config) {
+TwilioVideo.open = function (token, room, eventCallback, config) {
     config = config != null ? config : null;
-    exec(function(e) {
+    exec(function (e) {
         console.log("Twilio video event fired: " + e);
         if (eventCallback) {
             eventCallback(e.event, e.data);
         }
-    }, null, 'TwilioVideoPlugin', 'openRoom', [token, room, config]);
+    }, null, 'TwilioVideoPlugin', 'open', [token, room, config]);
 };
 
-TwilioVideo.closeRoom = function() {
-    return new Promise(function(resolve, reject) {
-        exec(function() {
+TwilioVideo.closeRoom = function () {
+    return new Promise(function (resolve, reject) {
+        exec(function () {
             resolve();
-        }, function(error) {
+        }, function (error) {
             reject(error);
         }, "TwilioVideoPlugin", "closeRoom", []);
     });
 };
 
-TwilioVideo.hasRequiredPermissions = function() {
-    return new Promise(function(resolve, reject) {
-        exec(function(result) {
+TwilioVideo.hasRequiredPermissions = function () {
+    return new Promise(function (resolve, reject) {
+        exec(function (result) {
             resolve(result);
-        }, function(error) {
+        }, function (error) {
             reject(error);
         }, "TwilioVideoPlugin", "hasRequiredPermissions", []);
     });
 };
 
-TwilioVideo.requestPermissions = function() {
-    return new Promise(function(resolve, reject) {
-        exec(function(result) {
+TwilioVideo.requestPermissions = function () {
+    return new Promise(function (resolve, reject) {
+        exec(function (result) {
             resolve(result);
-        }, function(error) {
+        }, function (error) {
             reject(error);
         }, "TwilioVideoPlugin", "requestPermissions", []);
     });

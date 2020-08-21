@@ -1,16 +1,16 @@
 <?xml version='1.0' encoding='utf-8'?>
-<plugin 
-    id="cordova-plugin-twilio-video"
-    version="1.0.0" 
-    xmlns="http://apache.org/cordova/ns/plugins/1.0"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<plugin
+        id="cordova-plugin-twilio-video"
+        version="1.0.0"
+        xmlns="http://apache.org/cordova/ns/plugins/1.0"
+        xmlns:android="http://schemas.android.com/apk/res/android">
 
     <name>Twilio Video Conversation Plugin</name>
     <author>Truewind IT</author>
     <license>MIT</license>
 
     <js-module name="twilio-video" src="www/twiliovideo.js">
-        <clobbers target="window.twiliovideo" />
+        <clobbers target="window.TwilioVideo" />
     </js-module>
 
     <engines>
@@ -21,7 +21,7 @@
     <platform name="ios">
 
         <config-file target="config.xml" parent="/*">
-            <feature name="VideoConversationPlugin">
+            <feature name="TwilioVideoPlugin">
                 <param name="ios-package" value="TwilioVideoPlugin" />
             </feature>
         </config-file>
@@ -30,21 +30,21 @@
         <source-file src="src/ios/TwilioVideoViewController.m" />
         <header-file src="src/ios/TwilioVideoViewController.h" />
         <header-file src="src/ios/TwilioVideoPlugin.h" />
-		<resource-file src="src/ios/Resources/TwilioVideo.storyboard" target="Resources/TwilioVideo.storyboard" />
+        <resource-file src="src/ios/Resources/TwilioVideo.storyboard" target="Resources/TwilioVideo.storyboard" />
         <resource-file src="src/ios/Resources/end-call-ios-white-33px.png" target="Resources/end-call-ios-white-33px.png" />
-		<resource-file src="src/ios/Resources/ic_end_call_114.png" target="Resources/ic_end_call_114.png" />
+        <resource-file src="src/ios/Resources/ic_end_call_114.png" target="Resources/ic_end_call_114.png" />
         <resource-file src="src/ios/Resources/ic_end_call_120.png" target="Resources/ic_end_call_120.png" />
-		<resource-file src="src/ios/Resources/ic_mic_off_114.png" target="Resources/ic_mic_off_114.png" />
-		<resource-file src="src/ios/Resources/ic_mic_on_114.png" target="Resources/ic_mic_on_114.png" />
-		<resource-file src="src/ios/Resources/ic_switch_cam_114.png" target="Resources/ic_switch_cam_114.png" />
-		<resource-file src="src/ios/Resources/ic_video_off_114.png" target="Resources/ic_video_off_114.png" />
-		<resource-file src="src/ios/Resources/ic_video_on_114.png" target="Resources/ic_video_on_114.png" />
-		<resource-file src="src/ios/Resources/icon_button_background.png" target="Resources/icon_button_background.png" />
+        <resource-file src="src/ios/Resources/ic_mic_off_114.png" target="Resources/ic_mic_off_114.png" />
+        <resource-file src="src/ios/Resources/ic_mic_on_114.png" target="Resources/ic_mic_on_114.png" />
+        <resource-file src="src/ios/Resources/ic_switch_cam_114.png" target="Resources/ic_switch_cam_114.png" />
+        <resource-file src="src/ios/Resources/ic_video_off_114.png" target="Resources/ic_video_off_114.png" />
+        <resource-file src="src/ios/Resources/ic_video_on_114.png" target="Resources/ic_video_on_114.png" />
+        <resource-file src="src/ios/Resources/icon_button_background.png" target="Resources/icon_button_background.png" />
         <resource-file src="src/ios/Resources/no-video-ios-white-33px.png" target="Resources/no-video-ios-white-33px.png" />
         <resource-file src="src/ios/Resources/no-mic-ios-white-33px.png" target="Resources/no-mic-ios-white-33px.png" />
         <resource-file src="src/ios/Resources/switch-camera-ios-white-33px.png" target="Resources/switch-camera-ios-white-33px.png" />
 
-		<preference name="CAMERA_USAGE_DESCRIPTION" default="Camera" />
+        <preference name="CAMERA_USAGE_DESCRIPTION" default="Camera" />
         <config-file target="*-Info.plist" parent="NSCameraUsageDescription">
             <string>$CAMERA_USAGE_DESCRIPTION</string>
         </config-file>
@@ -54,9 +54,13 @@
             <string>$MICROPHONE_USAGE_DESCRIPTION</string>
         </config-file>
 
+        <framework src="TwilioVideo" type="podspec" spec="1.1.0"/>
         <podspec>
+            <config>
+                <source url="https://cdn.cocoapods.org/"/>
+            </config>
             <pods>
-                <pod name="TwilioVideo" spec="2.1.0"/>
+                <pod name="TwilioVideo" spec="1.1.0"/>
             </pods>
         </podspec>
 
@@ -68,7 +72,7 @@
         <hook type="after_plugin_install" src="hooks/after_plugin_install/hook-add-r-import.js" />
 
         <config-file target="res/xml/config.xml" parent="/*">
-            <feature name="VideoConversationPlugin">
+            <feature name="TwilioVideoPlugin">
                 <param name="android-package" value="cordova.plugin.twilio.video.VideoConversationPlugin" />
             </feature>
         </config-file>
@@ -84,16 +88,16 @@
         </config-file>
 
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
-            <activity 
-                android:name="cordova.plugin.twilio.video.ConversationActivity"
-                android:configChanges="orientation|screenSize" 
-                android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+            <activity
+                    android:name="cordova.plugin.twilio.video.ConversationActivity"
+                    android:configChanges="orientation|screenSize"
+                    android:theme="@style/Theme.AppCompat.Light.NoActionBar">
             </activity>
         </config-file>
 
-		<source-file src="src/android/CallEvent.java" target-dir="src/org/apache/cordova/twiliovideo" />
-		<source-file src="src/android/CallEventsProducer.java" target-dir="src/org/apache/cordova/twiliovideo" />
-		<source-file src="src/android/CallObserver.java" target-dir="src/org/apache/cordova/twiliovideo" />
+        <source-file src="src/android/CallEvent.java" target-dir="src/org/apache/cordova/twiliovideo" />
+        <source-file src="src/android/CallEventsProducer.java" target-dir="src/org/apache/cordova/twiliovideo" />
+        <source-file src="src/android/CallObserver.java" target-dir="src/org/apache/cordova/twiliovideo" />
         <source-file src="src/android/VideoConversationPlugin.java" target-dir="src/org/apache/cordova/twiliovideo" />
         <source-file src="src/android/ConversationActivity.java" target-dir="src/org/apache/cordova/twiliovideo" />
         <source-file src="src/android/Dialog.java" target-dir="src/org/apache/cordova/twiliovideo" />
@@ -112,7 +116,7 @@
 
         <resource-file src="src/android/res/layout/activity_video.xml" target="res/layout/activity_video.xml" />
         <resource-file src="src/android/res/layout/content_video.xml" target="res/layout/content_video.xml" />
-      
+
         <resource-file src="src/android/res/values/colors.xml" target="res/values/twilio_colors.xml" />
         <resource-file src="src/android/res/values/dimens.xml" target="res/values/dimens.xml" />
         <resource-file src="src/android/res/values/strings.xml" target="res/values/strings.xml" />
